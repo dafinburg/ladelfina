@@ -3,12 +3,12 @@
  * Usa fuse.js para búsqueda aproximada por descripción.
  */
 
-import Fuse from 'fuse.js';
+import Fuse, { type IFuseOptions } from 'fuse.js';
 import type { ItemOrden, ItemMatcheado, ProductoContabilium } from '@/types';
 
 const PRICE_DIFF_THRESHOLD = 0.01; // 1%
 
-const FUSE_OPTIONS: Fuse.IFuseOptions<ProductoContabilium> = {
+const FUSE_OPTIONS: IFuseOptions<ProductoContabilium> = {
   keys: [
     { name: 'Descripcion', weight: 0.7 },
     { name: 'Codigo', weight: 0.3 },
