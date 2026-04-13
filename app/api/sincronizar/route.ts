@@ -15,13 +15,12 @@ async function sincronizarClientes() {
 
   if (hasSheets()) {
     const { clearAndWriteSheet } = await import('@/lib/googleSheets');
-    const headers = ['ID', 'Razón Social', 'CUIT', 'Condición IVA', 'Condición Pago', 'Email', 'Teléfono'];
+    const headers = ['ID', 'Razón Social', 'CUIT', 'Condición IVA', 'Email', 'Teléfono'];
     const rows = clientes.map((c) => [
       c.Id,
       c.RazonSocial ?? '',
       c.Cuit ?? '',
       c.CondicionIva ?? '',
-      c.CondicionPago ?? '',
       c.Email ?? '',
       c.Telefono ?? '',
     ]);
