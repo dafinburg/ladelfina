@@ -5,7 +5,8 @@ import type {
   RespuestaCrearPedido,
 } from '@/types';
 
-const BASE_URL = 'https://app.contabilium.com/api';
+const BASE_URL = 'https://rest.contabilium.com';
+const TOKEN_URL = 'https://rest.contabilium.com/token';
 
 // ── Token cache ───────────────────────────────────────────────
 
@@ -37,7 +38,7 @@ export async function getToken(): Promise<string> {
     client_secret: clientSecret,
   });
 
-  const res = await fetch(`${BASE_URL}/token`, {
+  const res = await fetch(TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: body.toString(),
