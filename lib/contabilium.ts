@@ -99,7 +99,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
-// ── Paginación genérica ───────────────────────────────────────
+// ── Paginación genérica (respuesta tipo array directo) ────────
 
 async function fetchAllPages<T>(
   endpoint: string,
@@ -112,17 +112,24 @@ async function fetchAllPages<T>(
   while (true) {
     const params = new URLSearchParams({
       page: String(page),
-      rows: String(pageSize),
+      pageSize: String(pageSize),
       ...extraParams,
     });
 
-    const data = await apiFetch<T[]>(`${endpoint}?${params}`);
+    const data = await apiFetch<T[] | { Items?: T[]; items?: T[] }>(`${endpoint}?${params}`);
 
-    if (!Array.isArray(data) || data.length === 0) break;
+    // La API puede devolver array directo o { Items: [...] }
+    const items: T[] = Array.isArray(data)
+      ? data
+      : (data as { Items?: T[]; items?: T[] }).Items ??
+        (data as { Items?: T[]; items?: T[] }).items ??
+        [];
 
-    all.push(...data);
+    if (items.length === 0) break;
 
-    if (data.length < pageSize) break;
+    all.push(...items);
+
+    if (items.length < pageSize) break;
     page++;
   }
 
@@ -132,7 +139,13 @@ async function fetchAllPages<T>(
 // ── Clientes ──────────────────────────────────────────────────
 
 export async function getClientes(): Promise<ClienteContabilium[]> {
-  return fetchAllPages<ClienteContabilium>('/clientes');
+  // Intentar con el endpoint de búsqueda (confirmado en n8n)
+  try {
+    return await fetchAllPages<ClienteContabilium>('/api/clientes/search');
+  } catch {
+    // Fallback al endpoint legacy
+    return fetchAllPages<ClienteContabilium>('/clientes');
+  }
 }
 
 export async function getClientePorCuit(
@@ -147,7 +160,13 @@ export async function getClientePorCuit(
 // ── Conceptos (productos) ─────────────────────────────────────
 
 export async function getConceptos(): Promise<ProductoContabilium[]> {
-  return fetchAllPages<ProductoContabilium>('/conceptos');
+  // Intentar con el endpoint de búsqueda (mismo patrón que clientes)
+  try {
+    return await fetchAllPages<ProductoContabilium>('/api/conceptos/search');
+  } catch {
+    // Fallback al endpoint legacy
+    return fetchAllPages<ProductoContabilium>('/conceptos');
+  }
 }
 
 // ── Crear pedido ──────────────────────────────────────────────
@@ -155,8 +174,16 @@ export async function getConceptos(): Promise<ProductoContabilium[]> {
 export async function crearPedido(
   payload: PedidoContabiliumPayload,
 ): Promise<RespuestaCrearPedido> {
-  return apiFetch<RespuestaCrearPedido>('/pedidos', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+  // Intentar con endpoint nuevo primero
+  try {
+    return await apiFetch<RespuestaCrearPedido>('/api/pedidos', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    return apiFetch<RespuestaCrearPedido>('/pedidos', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
 }
