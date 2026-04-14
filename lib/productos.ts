@@ -1,6 +1,6 @@
 /**
  * Obtiene el catálogo de productos con fallback automático:
- * 1. Intenta leer desde Google Sheets (si GOOGLE_SERVICE_ACCOUNT_JSON está configurado)
+ * 1. Intenta leer desde Google Sheets vía Apps Script (si APPS_SCRIPT_URL está configurado)
  * 2. Si no, obtiene directamente desde la API de Contabilium
  */
 
@@ -20,12 +20,12 @@ export async function getProductos(): Promise<{
   productos: ProductoContabilium[];
   fuente: 'sheets' | 'contabilium';
 }> {
-  const hasSheets = !!process.env.GOOGLE_SERVICE_ACCOUNT_JSON?.trim().startsWith('{');
+  const hasScript = !!process.env.APPS_SCRIPT_URL?.trim() && !!process.env.APPS_SCRIPT_SECRET?.trim();
 
-  if (hasSheets) {
+  if (hasScript) {
     try {
-      const { getSheetRows } = await import('./googleSheets');
-      const rows = await getSheetRows<Record<string, string>>('Productos');
+      const { readSheet } = await import('./appsScript');
+      const rows = await readSheet<Record<string, string>>('Productos');
       const productos = rows
         .filter((r) => r['ID'] && r['Descripción'])
         .map(sheetRowToProducto);
@@ -35,7 +35,7 @@ export async function getProductos(): Promise<{
       }
       // Sheets vacío → caer a Contabilium
     } catch {
-      // Error en Sheets → caer a Contabilium
+      // Error en Apps Script → caer a Contabilium
     }
   }
 
