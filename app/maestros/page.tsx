@@ -76,18 +76,9 @@ export default function MaestrosPage() {
             </div>
           </div>
           <nav className="flex gap-1">
-            <a
-              href="/"
-              className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              Nueva orden
-            </a>
-            <a
-              href="/maestros"
-              className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg"
-            >
-              Maestros
-            </a>
+            <a href="/" className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Nueva orden</a>
+            <a href="/tablero" className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Tablero</a>
+            <a href="/maestros" className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">Maestros</a>
           </nav>
         </div>
       </header>
