@@ -22,6 +22,7 @@ export interface OrdenCompra {
   cuit: string;
   direccionEntrega: string;
   condicionPago: string;
+  observaciones?: string;
   items: ItemOrden[];
   subtotal: number | null;
   iva: number | null;

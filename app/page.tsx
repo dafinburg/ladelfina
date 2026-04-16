@@ -55,16 +55,19 @@ export default function HomePage() {
     setPaso(4);
   };
 
-  const handleCargarOrden = async () => {
-    if (!orden) return;
+  const handleCargarOrden = async (ordenEditada: OrdenCompra, itemsEditados: ItemMatcheado[]) => {
+    if (!ordenEditada) return;
     setCargando(true);
     setError(null);
+    // Actualizar estado con los datos editados
+    setOrden(ordenEditada);
+    setItemsMatcheados(itemsEditados);
 
     try {
       const res = await fetch('/api/cargar-orden', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orden, itemsMatcheados }),
+        body: JSON.stringify({ orden: ordenEditada, itemsMatcheados: itemsEditados }),
       });
       const data = await res.json();
 
