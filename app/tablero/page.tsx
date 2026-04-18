@@ -208,37 +208,48 @@ export default function TableroComandasPage() {
             )}
           </div>
 
-          {/* Filtro de Tags */}
-          {data && data.allTags.length > 0 && (
+          {/* Filtro de Tags — siempre visible */}
+          {data && (
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">
-                Categorías (Tags) — seleccioná una o más, o dejá vacío para ver todas
+                Categorías (Tags de clientes)
               </label>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setTagsFiltro([])}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
-                    tagsFiltro.length === 0
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
-                  }`}
-                >
-                  Todos
-                </button>
-                {data.allTags.map((tag) => (
+              {data.allTags.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
                   <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
+                    onClick={() => setTagsFiltro([])}
                     className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
-                      tagsFiltro.includes(tag)
+                      tagsFiltro.length === 0
                         ? 'bg-blue-600 text-white border-blue-600'
                         : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
                     }`}
                   >
-                    {tag}
+                    Todos
                   </button>
-                ))}
-              </div>
+                  {data.allTags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
+                        tagsFiltro.includes(tag)
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                  <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>
+                    Ningún cliente tiene etiquetas asignadas aún. Para activar este filtro, abrí la ficha del cliente en Contabilium y completá el campo <strong>Etiquetas</strong>. Las categorías aparecerán aquí automáticamente al actualizar.
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
